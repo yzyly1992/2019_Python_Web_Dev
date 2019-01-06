@@ -1,0 +1,99 @@
+<!-- 继承父模板 '__base__.html' -->
+{% extends '__base__.html' %}
+<!--jinja2 title 块内容替换-->
+{% block title %}Register/注册{% endblock %}
+<!--jinja2 beforehead 块内容替换-->
+{% block beforehead %}
+<!--script中构建vue,向后端API提交合格的注册信息数据-->
+<script>
+
+function validateEmail(email) {
+    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+    return re.test(email.toLowerCase());
+}
+
+$(function () {
+    var vm = new Vue({
+        el: '#vm',
+        data: {
+            name: '',
+            email: '',
+            password1: '',
+            password2: ''
+        },
+        methods: {
+            submit: function (event) {
+                event.preventDefault();
+                var $form = $('#vm');
+                if (! this.name.trim()) {
+                    return $form.showFormError('NAME/请输入名字');
+                }
+                if (! validateEmail(this.email.trim().toLowerCase())) {
+                    return $form.showFormError('CORRECT EMAIL/请输入正确的Email地址');
+                }
+                if (this.password1.length < 6) {
+                    return $form.showFormError('PASSWORD AT LEAST 6 CHAR/口令长度至少为6个字符');
+                }
+                if (this.password1 !== this.password2) {
+                    return $form.showFormError('PASSWORD INCONSIST/两次输入的口令不一致');
+                }
+                var email = this.email.trim().toLowerCase();
+                $form.postJSON('/api/users', {
+                    name: this.name.trim(),
+                    email: email,
+                    passwd: CryptoJS.SHA1(email + ':' + this.password1).toString()
+                }, function (err, r) {
+                    if (err) {
+                        return $form.showFormError(err);
+                    }
+                    return location.assign('/');
+                });
+            }
+        }
+    });
+    $('#vm').show();
+});
+
+</script>
+
+{% endblock %}
+
+<!--jinja2 content 块内容替换，构建注册页面UI主要内容-->
+{% block content %}
+    <div class="uk-grid">
+    <div class="uk-width-1-1">
+        <h4>REGISTER/欢迎注册！</h4>
+        <form id="vm" v-on="submit: submit" class="uk-form-stacked">
+            <div class="uk-alert uk-alert-danger uk-hidden"></div>
+            <div class="uk-margin-top">
+                <label class="uk-form-label">NAME/名字:</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input uk-form-width-medium" v-model="name" type="text" maxlength="50" placeholder="名字">
+                </div>
+            </div>
+            <div class="uk-margin-top">
+                <label class="uk-form-label">EMAIL/电子邮件:</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input uk-form-width-medium" v-model="email" type="text" maxlength="50" placeholder="your-name@example.com">
+                </div>
+            </div>
+            <div class="uk-margin-top">
+                <label class="uk-form-label">PASSWORD/输入口令:</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input uk-form-width-medium" v-model="password1" type="password" maxlength="50" placeholder="输入口令">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label">REPEAT PASSWORD/重复口令:</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input uk-form-width-medium" v-model="password2" type="password" maxlength="50" placeholder="重复口令">
+                </div>
+            </div>
+            <div class="uk-margin-large">
+                <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-user"></i>REGISTER/注册</button>
+            </div>
+        </form>
+    </div>
+    </div>
+
+{% endblock %}

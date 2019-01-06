@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<!--处理分页导航栏代码-->
+{% macro pagination(page) %}
+    <ul class="uk-pagination uk-flex-center uk-margin-medium-top uk-margin-large-bottom">
+        {% if page.has_previous %}
+            <li><a href="?page={{ page.page_index - 1 }}"><span uk-pagination-previous></span></a></li>
+        {% else %}
+            <li class="uk-disabled"><a href="#"><span uk-pagination-previous></span></a></li>
+        {% endif %}
+            <li class="uk-active"><span>{{ page.page_index }}</span></li>
+        {% if page.has_next %}
+            <li><a href="?page={{ page.page_index + 1 }}"><span uk-pagination-next></span></a></li>
+        {% else %}
+            <li class="uk-disabled"><a href="#"><span uk-pagination-next></span></a></li>
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+<!--导航页代码-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width,initial-scale=0.9,minimum-scale=0.9,maximum-scale=0.9,user-scalable=no">
+    <meta name="wap-font-scale" content="no">
+    <!--jinja2 meta块-->
+    {% block meta %}<!-- block meta  -->{% endblock %}
+    <!--jinja2 title块-->
+    <title>{% block title %} ? {% endblock %}| AwesomeDavidBlog</title>
+    <link rel="stylesheet" href="/static/css/uikit.min.css">
+    <link rel="stylesheet" href="/static/css/uikit-rtl.min.css">
+    <link rel="stylesheet" href="/static/css/awesome.css" />
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/sha1.min.js"></script>
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/icons.min.js"></script>
+    <script src="/static/js/sticky.min.js"></script>
+    <script src="/static/js/vue.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    <!--jinja2 beforehead块-->
+    {% block beforehead %}<!-- before head  -->{% endblock %}
+</head>
+
+<!--导航页正文内容-->
+<body>
+    <!--"uk-"开头的都是UIkit里的组件，具体请参考UIkit官网的Documents详解-->
+    <!--uk-visible@m是大于中等尺寸屏幕时显示的UI-->
+    <div class="uk-margin uk-visible@m" style="background-color:rgba(100,150,185,0);">
+    <div class="uk-container uk-container-medium">
+    <!--导航栏UI-->
+    <nav class="uk-navbar-container" uk-navbar style="background-color:rgba(255,255,255,0);">
+        <div class="uk-navbar-left uk-margin-medium-top uk-margin-medium-bottom">
+            <a class="uk-navbar-item uk-logo uk-margin-left" href="/">
+                <!--此处uk-icon为图标,读者可以选UIkit自带icon,也可以添加自定义icon重新打包uk-icon.js,详见官网Documentation-->
+                <span class="uk-icon uk-margin-small-right" uk-icon="pagekit" ratio="2"></span>
+                 凹大卜  
+            </a>
+            <ul class="uk-navbar-nav">
+                <li><a href="/"> Article | 日志</a></li>
+                <li><a href="https://aodabo.tech/tags/tutorial"> Tutorial | 教程</a></li>
+                <li><a href="https://aodabo.tech/tags/landscape"> Landscape | 景观</a></li>
+                <li><a href="https://aodabo.tech/tags/coding"> Coding | 编程</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right uk-margin-medium-top uk-margin-medium-bottom">
+            <ul class="uk-navbar-nav">
+            {% if __user__ %}
+                <li>
+                    <a href="#0"> {{ __user__.name }}</a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            <li><a href="/signout"> Logout</a></li>
+                        </ul>
+                    </div>
+                </li>
+            {% else %}
+                <li><a href="/signin"> Login</a></li>
+                <li><a href="/register"> Register</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </nav>
+    </div>
+    </div>
+
+    <!--uk-hidden@m是小于中等尺寸屏幕时显示的UI-->
+    <nav class="uk-navbar-container uk-margin-medium uk-hidden@m" uk-navbar style="background-color:rgba(255,255,255,0);">
+        <div class="uk-navbar-left">
+            <a class="uk-navbar-item uk-logo" href="/">
+                <span class="uk-icon uk-margin-small-right" uk-icon="pagekit" ratio="2"></span>
+                 凹大卜  
+            </a>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+            <li>
+            <a class="uk-navbar-toggle" uk-toggle="target: #offcanvas-nav" uk-navbar-toggle-icon></a>
+
+            <div id="offcanvas-nav" uk-offcanvas="overlay: true; flip: true">
+            <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+            <ul class="uk-nav uk-nav-default uk-margin-auto-vertical">
+                <li><a href="/"> Article | 日志</a></li>
+                <li><a href="https://aodabo.tech/tags/tutorial"> Tutorial | 教程</a></li>
+                <li><a href="https://aodabo.tech/tags/landscape"> Landscape | 景观</a></li>
+                <li><a href="https://aodabo.tech/tags/coding"> Coding | 编程</a></li>
+                {% if __user__ %}
+                <li><a href="/signout"> Logout | 注销</a></li>
+                {% else %}
+                <li><a href="/signin"> Login | 登陆</a></li>
+                <li><a href="/register"> Register | 注册</a></li>
+                {% endif %}
+            </ul>
+            </div>
+            </div>
+            </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="uk-container uk-container-medium">
+            <!-- jinja2 content块 -->
+            {% block content %}
+            {% endblock %}
+    </div>
+
+    <!-- 页面底部图标栏和网站信息 -->
+    <div class="uk-margin-medium">
+    <div class="uk-container uk-container-center uk-text-center">
+        <p>
+            <a target="_blank" href="https://github.com/yzyly1992" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="github"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="instagram"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.2" uk-icon="twitter"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.2" uk-icon="google-plus"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="linkedin"></a>
+        </p>
+        <p class="uk-text-meta" style="line-height: 10px; padding: 10px 0; margin: 8px 0;">Powered by <a href="https://aodabo.tech">AwesomeDavidBlog!</a> Copyright &copy; 2018.</p>
+        <p class="uk-text-meta" style="line-height: 0px; padding: 0px 0; margin: 0px 0;"><a href="https://aodabo.tech/" target="_blank">Zhiyuan Yang</a>. All rights reserved.</p>
+    </div>
+    </div>
+
+</body>
+</html>

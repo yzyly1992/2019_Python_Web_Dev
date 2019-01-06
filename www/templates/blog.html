@@ -1,0 +1,166 @@
+<!-- 继承父模板 '__base__.html' -->
+{% extends '__base__.html' %}
+<!--jinja2 title 块内容替换-->
+{% block title %}{{ blog.name }}{% endblock %}
+<!--jinja2 beforehead 块内容替换-->
+{% block beforehead %}
+<!--script中构建vue,向后端API提交日志评论相关数据-->
+<script>
+
+var comment_url = '/api/blogs/{{ blog.id }}/comments';
+
+$(function () {
+    var $form = $('#form-comment');
+    $form.submit(function (e) {
+        e.preventDefault();
+        $form.showFormError('');
+        var content = $form.find('textarea').val().trim();
+        if (content==='') {
+            return $form.showFormError('请输入评论内容！');
+        }
+        $form.postJSON(comment_url, { content: content }, function (err, result) {
+            if (err) {
+                return $form.showFormError(err);
+            }
+            refresh();
+        });
+    });
+});
+</script>
+
+{% endblock %}
+
+<!--jinja2 content 块内容替换-->
+{% block content %}
+    <div class="uk-grid  uk-visible@m">
+    <div class="uk-width-3-4">
+        <!--日志内容详情-->
+        <article class="uk-article">
+            <h2>{{ blog.name }}</h2>
+            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
+            <p>{{ blog.html_content|safe }}</p>
+        </article>
+
+        <hr>
+
+    <!--日志评论区-->
+    {% if __user__ %}
+        <h3>发表评论</h3>
+
+        <article class="uk-comment">
+            <header class="uk-comment-header">
+                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ __user__.image }}">
+                <h4 class="uk-comment-title">{{ __user__.name }}</h4>
+            </header>
+            <div class="uk-comment-body">
+                <form id="form-comment" class="uk-form">
+                    <fieldset class="uk-fieldset">
+                        <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                        <div class="uk-margin">
+                            <textarea class="uk-textarea" rows="6" placeholder="说点什么吧"></textarea>
+                        </div>
+                        <div class="uk-margin">
+                            <button type="submit" class="uk-button uk-button-primary"> 发表评论</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </article>
+
+        <hr>
+    {% endif %}
+
+        <h3>最新评论</h3>
+
+        <ul class="uk-comment-list">
+            {% for comment in comments %}
+            <li>
+                <article class="uk-comment">
+                    <header class="uk-comment-header">
+                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.user_image }}">
+                        <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h4>
+                        <p class="uk-comment-meta">{{ comment.created_at|datetime }}</p>
+                    </header>
+                    <div class="uk-comment-body">
+                        {{ comment.html_content|safe }}
+                    </div>
+                </article>
+            </li>
+            {% else %}
+            <p>还没有人评论...</p>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+    <div class="uk-width-1-4 uk-visible@m">
+        <div class="uk-card uk-card-default">
+            <div class="uk-card-body">
+            <div class="uk-text-center">
+                <img class="uk-border-circle" width="120" height="120" src="{{ blog.user_image }}">
+                <h4>{{ blog.user_name }}</h4>
+            </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="uk-hidden@m">
+        <article class="uk-article">
+            <h3>{{ blog.name }}</h3>
+            <p class="uk-article-meta">{{ blog.user_name }} 发表于{{ blog.created_at|datetime }}</p>
+            <p>{{ blog.html_content|safe }}</p>
+        </article>
+
+        <hr>
+
+    {% if __user__ %}
+        <h4>发表评论</h4>
+
+        <article class="uk-comment">
+            <header class="uk-comment-header">
+                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ __user__.image }}">
+                <h5 class="uk-comment-title">{{ __user__.name }}</h5>
+            </header>
+            <div class="uk-comment-body">
+                <form id="form-comment" class="uk-form">
+                    <fieldset class="uk-fieldset">
+                        <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                        <div class="uk-margin">
+                            <textarea class="uk-textarea" rows="6" placeholder="说点什么吧"></textarea>
+                        </div>
+                        <div class="uk-margin">
+                            <button type="submit" class="uk-button uk-button-primary"> 发表评论</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </article>
+
+        <hr>
+    {% endif %}
+
+        <h4>最新评论</h4>
+
+        <ul class="uk-comment-list">
+            {% for comment in comments %}
+            <li>
+                <article class="uk-comment">
+                    <header class="uk-comment-header">
+                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.user_image }}">
+                        <h5 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h5>
+                        <p class="uk-comment-meta">{{ comment.created_at|datetime }}</p>
+                    </header>
+                    <div class="uk-comment-body">
+                        {{ comment.html_content|safe }}
+                    </div>
+                </article>
+            </li>
+            {% else %}
+            <p>还没有人评论...</p>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+{% endblock %}

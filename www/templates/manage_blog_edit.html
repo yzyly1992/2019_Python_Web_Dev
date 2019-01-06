@@ -1,0 +1,107 @@
+<!-- 继承父模板 '__base__.html' -->
+{% extends '__base__.html' %}
+<!--jinja2 title 块内容替换-->
+{% block title %}编辑日志{% endblock %}
+<!--jinja2 beforehead 块内容替换-->
+{% block beforehead %}
+<!--script中构建vue,向后端API提交日志相关数据,包括创建新日志和修改旧日志-->
+<script>
+
+var
+    ID = '{{ id }}',
+    action = '{{ action }}';
+
+function initVM(blog) {
+    var vm = new Vue({
+        el: '#vm',
+        data: blog,
+        methods: {
+            submit: function (event) {
+                event.preventDefault();
+                var $form = $('#vm').find('form');
+                $form.postJSON(action, this.$data, function (err, r) {
+                    if (err) {
+                        $form.showFormError(err);
+                    }
+                    else {
+                        return location.assign('/manage/blogs');
+                    }
+                });
+            }
+        }
+    });
+    $('#vm').show();
+}
+
+$(function () {
+    if (ID) {
+        getJSON('/api/blogs/' + ID, function (err, blog) {
+            if (err) {
+                return fatal(err);
+            }
+            $('#loading').hide();
+            initVM(blog);
+        });
+    }
+    else {
+        $('#loading').hide();
+        initVM({
+            name: '',
+            summary: '',
+            content: ''
+        });
+    }
+});
+
+</script>
+
+{% endblock %}
+
+<!--jinja2 content 块内容替换，构建日志编写页面UI主要内容-->
+{% block content %}
+    <div class="uk-grid">
+    <div class="uk-width-1-1 uk-margin-bottom">
+        <ul class="uk-breadcrumb">
+            <li><a href="/manage/comments">评论</a></li>
+            <li><a href="/manage/blogs">日志</a></li>
+            <li><a href="/manage/users">用户</a></li>
+        </ul>
+    </div>
+
+    <div id="error" class="uk-width-1-1">
+    </div>
+
+    <div id="loading" class="uk-width-1-1 uk-text-center">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+    </div>
+
+    <div id="vm" class="uk-width-2-3">
+        <form v-on="submit: submit" class="uk-form-stacked">
+            <div class="uk-alert uk-alert-danger uk-hidden"></div>
+            <div class="uk-margin-top">
+                <label class="uk-form-label">标题:</label>
+                <div class="uk-form-controls">
+                    <input v-model="name" name="name" type="text" placeholder="标题" class="uk-input uk-form-width-large">
+                </div>
+            </div>
+            <div class="uk-margin-top">
+                <label class="uk-form-label">摘要:</label>
+                <div class="uk-form-controls">
+                    <textarea v-model="summary" rows="4" name="summary" placeholder="摘要" class="uk-textarea" style="resize:none;"></textarea>
+                </div>
+            </div>
+            <div class="uk-margin-top">
+                <label class="uk-form-label">内容:</label>
+                <div class="uk-form-controls">
+                    <textarea v-model="content" rows="12" name="content" placeholder="内容" class="uk-textarea" style="resize:none;"></textarea>
+                </div>
+            </div>
+            <div class="uk-margin-top">
+                <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-save"></i> 保存</button>
+                <a href="/manage/blogs" class="uk-button"><i class="uk-icon-times"></i> 取消</a>
+            </div>
+        </form>
+    </div>
+    </div>
+
+{% endblock %}

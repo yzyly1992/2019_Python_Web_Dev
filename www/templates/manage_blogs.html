@@ -1,0 +1,122 @@
+<!-- 继承父模板 '__base__.html' -->
+{% extends '__base__.html' %}
+<!--jinja2 title 块内容替换-->
+{% block title %}日志{% endblock %}
+<!--jinja2 beforehead 块内容替换-->
+{% block beforehead %}
+<!--script中构建vue,向后端API提交日志管理操作相关数据-->
+<script>
+
+function initVM(data) {
+    var vm = new Vue({
+        el: '#vm',
+        data: {
+            blogs: data.blogs,
+            page: data.page
+        },
+        methods: {
+            previous: function () {
+                gotoPage(this.page.page_index - 1);
+            },
+            next: function () {
+                gotoPage(this.page.page_index + 1);
+            },
+            edit_blog: function (blog) {
+                location.assign('/manage/blogs/edit?id=' + blog.id);
+            },
+            delete_blog: function (blog) {
+                if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
+                    postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
+                        if (err) {
+                            return alert(err.message || err.error || err);
+                        }
+                        refresh();
+                    });
+                }
+            }
+        }
+    });
+    $('#vm').show();
+}
+
+$(function() {
+    getJSON('/api/blogs', {
+        page: {{ page_index }}
+    }, function (err, results) {
+        if (err) {
+            return fatal(err);
+        }
+        $('#loading').hide();
+        initVM(results);
+    });
+});
+
+</script>
+
+{% endblock %}
+
+<!--jinja2 content 块内容替换-->
+{% block content %}
+    <div class="uk-grid">
+    <div class="uk-width-1-1 uk-margin-bottom">
+        <ul class="uk-breadcrumb">
+            <li><a href="/manage/comments">评论</a></li>
+            <li class="uk-active"><span>日志</span></li>
+            <li><a href="/manage/users">用户</a></li>
+        </ul>
+    </div>
+
+    <div id="error" class="uk-width-1-1">
+    </div>
+
+    <div id="loading" class="uk-width-1-1 uk-text-center">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+    </div>
+
+    <div id="vm" class="uk-width-1-1">
+        <a href="/manage/blogs/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i> 新日志</a>
+
+        <table class="uk-table uk-table-divider">
+            <thead>
+                <tr>
+                    <th class="uk-table-expand uk-text-left"> 标题</th>
+                    <th class="uk-text-left">作者</th>
+                    <th class="uk-text-left">标签</th>
+                    <th class="uk-text-left">创建时间</th>
+                    <th class="uk-text-left">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-repeat="blog: blogs" >
+                    <td>
+                        <a target="_blank" v-attr="href: '/blog/'+blog.id" v-text="blog.name"></a>
+                    </td>
+                    <td>
+                        <a target="_blank" v-attr="href: '/user/'+blog.user_id" v-text="blog.user_name"></a>
+                    </td>
+                    <td>
+                        <a target="_blank" v-attr="href: '/blogs/'+blog.tag" v-text="blog.tag"></a>
+                    </td>
+                    <td>
+                        <span v-text="blog.created_at.toDateTime()"></span>
+                    </td>
+                    <td>
+                        <a href="#0" v-on="click: edit_blog(blog)">编辑</a>
+                        <a href="#0" v-on="click: delete_blog(blog)">删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="uk-width-1-1 uk-text-center">
+        <ul class="uk-pagination">
+            <li v-if="! page.has_previous" class="uk-disabled"><span><i uk-icon="chevron-left"></i></span></li>
+            <li v-if="page.has_previous"><a v-on="click: previous()" href="#0"><i uk-icon="chevron-left"></i></a></li>
+            <li class="uk-active"><span v-text="page.page_index"></span></li>
+            <li v-if="! page.has_next" class="uk-disabled"><span><i uk-icon="chevron-right"></i></span></li>
+            <li v-if="page.has_next"><a v-on="click: next()" href="#0"><i uk-icon="chevron-right"></i></a></li>
+        </ul>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
