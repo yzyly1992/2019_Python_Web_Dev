@@ -293,7 +293,7 @@ async def api_get_blog(*, id):
 
 ## 发表日志API
 @post('/api/blogs')
-async def api_create_blog(request, *, name, summary, content, tag):
+async def api_create_blog(request, *, name, summary, content):
     check_admin(request)
     if not name or not name.strip():
         raise APIValueError('name', 'name cannot be empty.')
@@ -301,15 +301,13 @@ async def api_create_blog(request, *, name, summary, content, tag):
         raise APIValueError('summary', 'summary cannot be empty.')
     if not content or not content.strip():
         raise APIValueError('content', 'content cannot be empty.')
-    if not tag or not tag.strip():
-        raise APIValueError('tag', 'tag cannot be empty.')
-    blog = Blog(user_id=request.__user__.id, user_name=request.__user__.name, user_image=request.__user__.image, name=name.strip(), summary=summary.strip(), content=content.strip(), tag=tag.strip())
+    blog = Blog(user_id=request.__user__.id, user_name=request.__user__.name, user_image=request.__user__.image, name=name.strip(), summary=summary.strip(), content=content.strip())
     await blog.save()
     return blog
 
 ## 编辑日志API
 @post('/api/blogs/{id}')
-async def api_update_blog(id, request, *, name, summary, content, tag):
+async def api_update_blog(id, request, *, name, summary, content):
     check_admin(request)
     blog = await Blog.find(id)
     if not name or not name.strip():
@@ -318,12 +316,9 @@ async def api_update_blog(id, request, *, name, summary, content, tag):
         raise APIValueError('summary', 'summary cannot be empty.')
     if not content or not content.strip():
         raise APIValueError('content', 'content cannot be empty.')
-    if not tag or not tag.strip():
-        raise APIValueError('tag', 'tag cannot be empty.')
     blog.name = name.strip()
     blog.summary = summary.strip()
     blog.content = content.strip()
-    blog.tag = tag.strip()
     await blog.update()
     return blog
 
