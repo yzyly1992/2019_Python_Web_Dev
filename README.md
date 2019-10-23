@@ -1,4 +1,9 @@
-#### 2019 Python Web 开发建站教程
+
+### 2019 Python Web Tutorial 开发建站教程
+======================
+![Version](https://img.shields.io/badge/stable-1.3.1-orange)
+![Download](https://img.shields.io/badge/download-96-blue)
+![License](https://img.shields.io/badge/license-GNU%203.0-green)
 
 作为初学完Python基础知识的同学，一定会有疑问：如何使用这些Python基础知识，如何应用Python做出些有趣的东西来。建立个人博客网站是一个非常有成就感的不错选择。本教程基于廖雪峰老师2016年的Python3教程实践部分章节结合最新的前端技术改编而来**2019 Python Web 应用开发教程**。相反于使用成熟方便的Python Web开发框架像Flask, Django等。本教程会从最底代码开始来构建数据库，构建Web框架，构建ORM，构建MVC，构建API，到构建前端页面CSS/HTML，Javascript， DOM操作再到服务器部署等。用详尽的代码和注释一步一步引导读者进行网站开发的操作。
 
