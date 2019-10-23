@@ -1,6 +1,6 @@
 
-### 2019 Python Web Tutorial 开发建站教程
-======================
+## 2019 Python Web Tutorial 开发建站教程
+
 ![Version](https://img.shields.io/badge/stable-1.3.1-orange)
 ![Download](https://img.shields.io/badge/download-96-blue)
 ![License](https://img.shields.io/badge/license-GNU%203.0-green)
