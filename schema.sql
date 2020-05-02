@@ -1,6 +1,7 @@
 -- schema.sql
 
 drop database if exists awesome;
+drop user if exists 'www-data'@'localhost';
 
 create database awesome;
 
