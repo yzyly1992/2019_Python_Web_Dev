@@ -6,8 +6,7 @@
 
 作为初学完Python基础知识的同学，一定会有疑问：如何使用这些Python基础知识，如何应用Python做出些有趣的东西来。建立个人博客网站是一个非常有成就感的不错选择。本教程基于廖雪峰老师2016年的Python3教程实践部分章节结合最新的前端技术改编而来**2019 Python Web 应用开发教程**。相反于使用成熟方便的Python Web开发框架像Flask, Django等。本教程会从最底代码开始来构建数据库，构建Web框架，构建ORM，构建MVC，构建API，到构建前端页面CSS/HTML，Javascript， DOM操作再到服务器部署等。用详尽的代码和注释一步一步引导读者进行网站开发的操作。
 
-#### 2020.05.03 更新
-更新aiohttp新版本的用法，更新fabric2远程部署代码，更新schema.sql数据库初始化代码。
+**2020.05.03更新：**更新`aiohttp`用法适应最新的`aiohttp`版本，更新数据库初始代码`schema.sql`，更新远程部署代码`fabfile.py`以适应新版`fabric`。
 
 最终的网站效果会类似[凹大卜](https://aodabo.tech)这样。网站的主要功能及页面包括：
 
@@ -42,7 +41,5 @@
 - [Python 网站开发(14) -- 管理页面](https://aodabo.tech/blog/001546712781110f93a3009f6ba4a63ba868259827f8349000)
 - [Python 网站开发(15) -- 部署网站到远程服务器](https://aodabo.tech/blog/0015467126618282f6a741af9b34043922eea07e4ffb077000)
 - [Python 网站开发(16) -- Python建站的其他可能性](https://aodabo.tech/blog/001546712024642647c50c93de34db58ea68238cf94c030000)
-
-
-#### Update
-- 2020.05.02: Update usage of aiohttp, remove deprecated code; update initiate sql code to check and remove existing user of www-data.
+- [PYTHON-MARKDOWN EXTENSIONS -- MARKDOWN 扩展教程](https://aodabo.tech/blog/001566965177983f0ba28fc090447ae838cf1c8fabd8c08000)
+- [FABRIC2 DEPLOY TUTORIAL -- FABRIC2 部署教程](https://aodabo.tech/blog/0015885436666555a7a36801ec246de85db537366de01ed000)
