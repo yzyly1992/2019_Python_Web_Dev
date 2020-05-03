@@ -11,7 +11,7 @@ from aiohttp import web
 from coroweb import get, post
 
 ## 分页管理以及调取API时的错误信息
-from apis import Page, APIValueError, APIResourceNotFoundError
+from apis import Page, APIValueError, APIResourceNotFoundError, APIPermissionError, APIError
 from models import User, Comment, Blog, next_id
 from config import configs
 
